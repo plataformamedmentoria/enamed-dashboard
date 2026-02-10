@@ -287,6 +287,7 @@ export default function EscolaPage() {
   const [modalQuestoes, setModalQuestoes] = useState<Questao[]>([]);
   const [questaoSelecionada, setQuestaoSelecionada] = useState<Questao | null>(null);
   const [isSubdomain, setIsSubdomain] = useState(false);
+  const [exportando, setExportando] = useState(false);
 
   // Detecta se está acessando via subdomínio (esconde navegação)
   useEffect(() => {
@@ -885,19 +886,32 @@ export default function EscolaPage() {
               </select>
             </div>
             
-            {/* Botão Exportar PDF */}
+            {/* Botão Exportar DOCX */}
             <div style={{ marginLeft: 'auto' }}>
-              <button 
+              <button
                 className="btn-exportar"
-                onClick={() => {
-                  const params = new URLSearchParams();
-                  params.set('escola', escolaId);
-                  if (areaFormacao) params.set('area_formacao', areaFormacao);
-                  if (areaConhecimento) params.set('area_conhecimento', areaConhecimento);
-                  window.open(`/api/exportar?${params.toString()}`, '_blank');
+                disabled={exportando}
+                onClick={async () => {
+                  setExportando(true);
+                  try {
+                    const { generateReport } = await import('@/lib/report/generateReport');
+                    await generateReport({
+                      escolaId,
+                      questoes,
+                      indices,
+                      sprmed,
+                      areaFormacao: areaFormacao || undefined,
+                      areaConhecimento: areaConhecimento || undefined,
+                    });
+                  } catch (err) {
+                    console.error('Erro ao exportar:', err);
+                    alert('Erro ao gerar relatório. Veja o console para detalhes.');
+                  } finally {
+                    setExportando(false);
+                  }
                 }}
               >
-                📄 Exportar Relatório
+                {exportando ? '⏳ Gerando...' : '📄 Exportar Relatório'}
               </button>
             </div>
           </div>
