@@ -286,6 +286,16 @@ export default function EscolaPage() {
   const [modalTitle, setModalTitle] = useState('');
   const [modalQuestoes, setModalQuestoes] = useState<Questao[]>([]);
   const [questaoSelecionada, setQuestaoSelecionada] = useState<Questao | null>(null);
+  const [isSubdomain, setIsSubdomain] = useState(false);
+
+  // Detecta se está acessando via subdomínio (esconde navegação)
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const hostname = window.location.hostname;
+      const isOnSubdomain = hostname.endsWith('.enamed.sprmed.com.br') && hostname !== 'enamed.sprmed.com.br';
+      setIsSubdomain(isOnSubdomain);
+    }
+  }, []);
 
   useEffect(() => {
     if (!escola) return;
@@ -642,7 +652,7 @@ export default function EscolaPage() {
       {/* Header */}
       <div className="header">
         <h1>
-          <Link href="/" style={{ color: '#888', marginRight: 15 }}>&larr;</Link>
+          {!isSubdomain && <Link href="/" style={{ color: '#888', marginRight: 15 }}>&larr;</Link>}
           Dashboard ENAMED 2025 - {escola.nome}
         </h1>
         <p>{escola.alunos} alunos | {escola.cidade}/{escola.uf} | Clique nos cards para ver as questões</p>
