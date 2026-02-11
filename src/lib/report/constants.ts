@@ -180,6 +180,7 @@ export const LEGENDAS: Record<string, Record<string, string>> = {
     RAPS: 'Atencao Psicossocial (CAPS I/II/AD)',
     CRON: 'Doencas Cronicas (Ambulatorios, Atencao domiciliar)',
     REAB: 'Reabilitacao (Centros de referencia)',
+    GESTAO: 'Gestao em Saude (Planejamento, equipe, politicas)',
   },
   bloom: {
     Lembrar: '1 - Recuperar informacao da memoria',

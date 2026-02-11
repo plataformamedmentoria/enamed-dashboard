@@ -188,7 +188,8 @@ const LEGENDAS: Record<string, Record<string, string>> = {
     'MAT': 'Rede Materno-Infantil (Maternidades, Casas de parto)',
     'RAPS': 'Atenção Psicossocial (CAPS I/II/AD)',
     'CRON': 'Doenças Crônicas (Ambulatórios, Atenção domiciliar)',
-    'REAB': 'Reabilitação (Centros de referência)'
+    'REAB': 'Reabilitação (Centros de referência)',
+    'GESTAO': 'Gestão em Saúde (Planejamento, equipe, políticas)'
   },
   bloom: {
     'Lembrar': '1 - Recuperar informação da memória',

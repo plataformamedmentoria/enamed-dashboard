@@ -289,7 +289,13 @@ function buildDimensionSection(
   for (const [nome, numeros] of Object.entries(indice)) {
     const qs = questoesFiltradas.filter((q) => numeros.includes(q.numero));
     if (qs.length === 0) continue;
-    items.push({ nome, taxa: taxas[nome]?.taxa ?? 0, qtd: qs.length, numeros });
+    const taxaSprmed = taxas[nome]?.taxa;
+    const taxaReal = taxaSprmed !== undefined ? taxaSprmed : (
+      qs.reduce((s, q) => s + q.total, 0) > 0
+        ? (qs.reduce((s, q) => s + q.acertos, 0) / qs.reduce((s, q) => s + q.total, 0)) * 100
+        : 0
+    );
+    items.push({ nome, taxa: taxaReal, qtd: qs.length, numeros });
   }
   if (items.length === 0) return [];
   items.sort((a, b) => a.taxa - b.taxa);
