@@ -940,6 +940,16 @@ export default function EscolaPage() {
             <strong>Área de Conhecimento (hierarquia):</strong> Clínica Médica, Cirurgia, Pediatria, GO, Med Preventiva → Subespecialidade → Tema
           </div>
 
+          <div className="filter-legend" style={{ marginTop: 10 }}>
+            <strong>Como ler cada card de dimensão:</strong><br/>
+            <strong>Taxa de acerto (%)</strong> = total de acertos / total de respostas de todos os alunos em todas as questões daquela dimensão<br/>
+            <span style={{ color: '#22c55e' }}>N questões (verde)</span> = questões onde a maioria dos alunos acertou (taxa da questão &ge; 50%)<br/>
+            <span style={{ color: '#ef4444' }}>N questões (vermelho)</span> = questões onde a maioria dos alunos errou (taxa da questão &lt; 50%)<br/>
+            <span style={{ color: '#22c55e' }}>N acertos</span> / <span style={{ color: '#ef4444' }}>N erros</span> = soma de todas as respostas corretas e incorretas de todos os alunos naquela dimensão<br/>
+            <span style={{ color: '#22c55e' }}>Acertadas: Q1, Q2...</span> = números das questões com taxa de acerto &ge; 50%<br/>
+            <span style={{ color: '#ef4444' }}>Erradas: Q3, Q4...</span> = números das questões com taxa de acerto &lt; 50%
+          </div>
+
           {/* Seções */}
           {renderSection(
             'Ciclo Formativo',

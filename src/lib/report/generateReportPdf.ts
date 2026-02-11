@@ -378,6 +378,19 @@ export async function generateReportPdf(params: ReportParams): Promise<void> {
   // 2. Sumário executivo
   content.push(...buildExecutiveSummary(escola, questoesFiltradas));
 
+  // Legenda explicativa
+  content.push({ text: 'Como ler as tabelas de dimensao', style: 'sectionTitle' });
+  content.push({
+    ul: [
+      { text: [{ text: 'Taxa de acerto (%): ', bold: true }, 'total de acertos / total de respostas de todos os alunos em todas as questoes daquela dimensao.'], fontSize: 9, color: CINZA },
+      { text: [{ text: 'Qtd: ', bold: true }, 'numero de questoes da prova classificadas naquela dimensao.'], fontSize: 9, color: CINZA },
+      { text: [{ text: 'Acertadas (>= 50%): ', bold: true, color: VERDE_HEX }, 'numeros das questoes onde a maioria dos alunos acertou (taxa da questao >= 50%).'], fontSize: 9, color: CINZA },
+      { text: [{ text: 'Erradas (< 50%): ', bold: true, color: VERMELHO_HEX }, 'numeros das questoes onde a maioria dos alunos errou (taxa da questao < 50%).'], fontSize: 9, color: CINZA },
+    ],
+    margin: [0, 0, 0, 10],
+  });
+  content.push({ text: '', pageBreak: 'after' });
+
   // 3. Dimensões
   for (const dim of DIMENSOES) {
     const indice = indices[dim.indiceKey];
