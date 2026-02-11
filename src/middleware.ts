@@ -11,6 +11,7 @@ const SUBDOMAIN_MAP: Record<string, string> = {
   'slmandic-campinas': 'slmandic_campinas',
   'facene-rn': 'facene_rn',
   'enamed-5': 'enamed_5',
+  'unifoa': 'unifoa',
 };
 
 // Domínios base (sem subdomínio = admin)

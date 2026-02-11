@@ -127,6 +127,16 @@ const ESCOLAS: Record<string, {
     proficiencia: -0.39,
     risco: 66,
     percentualRisco: 52
+  },
+  unifoa: {
+    nome: 'UNIFOA',
+    cidade: 'Volta Redonda',
+    uf: 'RJ',
+    alunos: 119,
+    nota: 61.71,
+    proficiencia: -0.3,
+    risco: 47,
+    percentualRisco: 39
   }
 };
 

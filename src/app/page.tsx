@@ -110,6 +110,15 @@ const ESCOLAS = [
     alunos: 126,
     nota: 60.26,
     proficiencia: -0.39
+  },
+  {
+    id: 'unifoa',
+    nome: 'UNIFOA',
+    cidade: 'Volta Redonda',
+    uf: 'RJ',
+    alunos: 119,
+    nota: 61.71,
+    proficiencia: -0.3
   }
 ];
 
