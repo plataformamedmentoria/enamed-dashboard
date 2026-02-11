@@ -314,10 +314,55 @@ function buildQuestionDetail(questoes: Questao[]): Content[] {
 
 // --- Orquestrador Principal ---
 
+async function loadLogoBase64(): Promise<string> {
+  const res = await fetch('/logo_sprmed.png');
+  const blob = await res.blob();
+  // Reduz resolução para diminuir tamanho do PDF
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = 50;
+      canvas.height = Math.round(50 * (img.height / img.width));
+      const ctx = canvas.getContext('2d')!;
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      resolve(canvas.toDataURL('image/jpeg', 0.4));
+    };
+    const reader = new FileReader();
+    reader.onloadend = () => { img.src = reader.result as string; };
+    reader.readAsDataURL(blob);
+  });
+}
+
+async function createRotatedLogo(logoBase64: string): Promise<string> {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      // Canvas reduzido para manter PDF leve
+      const size = 200;
+      const canvas = document.createElement('canvas');
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext('2d')!;
+      ctx.translate(size / 2, size / 2);
+      ctx.rotate(-40 * Math.PI / 180);
+      const w = 150;
+      const h = w * (img.height / img.width);
+      ctx.drawImage(img, -w / 2, -h / 2, w, h);
+      resolve(canvas.toDataURL('image/jpeg', 0.4));
+    };
+    img.src = logoBase64;
+  });
+}
+
 export async function generateReportPdf(params: ReportParams): Promise<void> {
   const { escolaId, questoes, indices, sprmed, areaFormacao, areaConhecimento } = params;
   const escola = ESCOLAS[escolaId];
   if (!escola) throw new Error(`Escola nao encontrada: ${escolaId}`);
+
+  // Carrega logo para watermark
+  const logoBase64 = await loadLogoBase64();
+  const rotatedLogo = await createRotatedLogo(logoBase64);
 
   const questoesFiltradas = filtrarQuestoes(questoes, areaFormacao, areaConhecimento);
 
@@ -353,7 +398,30 @@ export async function generateReportPdf(params: ReportParams): Promise<void> {
   const docDefinition: any = {
     pageSize: 'A4',
     pageMargins: [40, 80, 40, 60],
-    watermark: { text: 'SPRMed', color: AZUL, opacity: 0.06, bold: true, fontSize: 100, angle: -45 },
+    background: () => {
+      const items: any[] = [];
+      // Logo grande diagonal central
+      items.push({ image: rotatedLogo, width: 550, absolutePosition: { x: 25, y: 150 }, opacity: 0.11 });
+      // Grid de logos pequenas preenchendo a página (A4: 595x842)
+      const logoW = 70;
+      const spacingX = 95;
+      const spacingY = 75;
+      const cols = 6;
+      const rows = 11;
+      const offsetX = 15;
+      const offsetY = 20;
+      for (let row = 0; row < rows; row++) {
+        for (let col = 0; col < cols; col++) {
+          items.push({
+            image: logoBase64,
+            width: logoW,
+            absolutePosition: { x: offsetX + col * spacingX, y: offsetY + row * spacingY },
+            opacity: 0.11,
+          });
+        }
+      }
+      return items;
+    },
     info: {
       title: `Relatorio Filtro SPRMed - ${escola.nome}`,
       author: 'SPRMed Dashboard ENAMED 2025',
