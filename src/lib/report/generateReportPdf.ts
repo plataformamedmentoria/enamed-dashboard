@@ -171,6 +171,138 @@ function buildExecutiveSummary(escola: typeof ESCOLAS[string], questoes: Questao
   ];
 }
 
+function createScatterChart(items: { nome: string; taxa: number; qtd: number }[]): string {
+  const W = 520;
+  const H = 340;
+  const PAD = { top: 30, right: 140, bottom: 40, left: 50 };
+  const plotW = W - PAD.left - PAD.right;
+  const plotH = H - PAD.top - PAD.bottom;
+
+  const canvas = document.createElement('canvas');
+  canvas.width = W * 2; // 2x for retina
+  canvas.height = H * 2;
+  const ctx = canvas.getContext('2d')!;
+  ctx.scale(2, 2);
+
+  // Background
+  ctx.fillStyle = '#f8f9fa';
+  ctx.fillRect(0, 0, W, H);
+
+  // Max values for scaling
+  const maxQtd = Math.max(...items.map(i => i.qtd), 1);
+
+  // Axes
+  ctx.strokeStyle = '#ccc';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(PAD.left, PAD.top);
+  ctx.lineTo(PAD.left, H - PAD.bottom);
+  ctx.lineTo(W - PAD.right, H - PAD.bottom);
+  ctx.stroke();
+
+  // Grid lines & labels
+  ctx.fillStyle = '#999';
+  ctx.font = '9px Arial';
+  ctx.textAlign = 'right';
+  for (let t = 0; t <= 100; t += 25) {
+    const y = PAD.top + plotH - (t / 100) * plotH;
+    ctx.fillText(`${t}%`, PAD.left - 5, y + 3);
+    ctx.strokeStyle = '#eee';
+    ctx.beginPath();
+    ctx.moveTo(PAD.left, y);
+    ctx.lineTo(W - PAD.right, y);
+    ctx.stroke();
+  }
+  ctx.textAlign = 'center';
+  for (let q = 0; q <= maxQtd; q += Math.max(1, Math.ceil(maxQtd / 5))) {
+    const x = PAD.left + (q / maxQtd) * plotW;
+    ctx.fillText(String(q), x, H - PAD.bottom + 15);
+  }
+
+  // Axis labels
+  ctx.fillStyle = '#666';
+  ctx.font = '10px Arial';
+  ctx.textAlign = 'center';
+  ctx.fillText('Questoes', PAD.left + plotW / 2, H - 5);
+  ctx.save();
+  ctx.translate(12, PAD.top + plotH / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.fillText('Taxa de Acerto', 0, 0);
+  ctx.restore();
+
+  // 50% reference line
+  const y50 = PAD.top + plotH - (50 / 100) * plotH;
+  ctx.strokeStyle = '#999';
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath();
+  ctx.moveTo(PAD.left, y50);
+  ctx.lineTo(W - PAD.right, y50);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Draw bubbles and labels
+  const labelPositions: { x: number; y: number; nome: string; taxa: number }[] = [];
+
+  items.forEach((item) => {
+    const cx = PAD.left + (item.qtd / maxQtd) * plotW;
+    const cy = PAD.top + plotH - (item.taxa / 100) * plotH;
+    const score = (100 - item.taxa) * Math.log(item.qtd + 1);
+    const r = Math.max(4, Math.min(14, 3 + score / 15));
+
+    // Bubble color based on taxa
+    if (item.taxa >= 70) ctx.fillStyle = 'rgba(34, 197, 94, 0.7)';
+    else if (item.taxa >= 50) ctx.fillStyle = 'rgba(245, 158, 11, 0.7)';
+    else ctx.fillStyle = 'rgba(239, 68, 68, 0.7)';
+
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    labelPositions.push({ x: cx, y: cy, nome: item.nome, taxa: item.taxa });
+  });
+
+  // Draw leader lines and labels on the right side
+  ctx.font = '9px Arial';
+  ctx.textAlign = 'left';
+  const labelX = W - PAD.right + 10;
+  const usedYPositions: number[] = [];
+
+  labelPositions.forEach((lbl) => {
+    // Find a Y position that doesn't overlap
+    let labelY = lbl.y;
+    for (const used of usedYPositions) {
+      if (Math.abs(labelY - used) < 14) {
+        labelY = used + 14;
+      }
+    }
+    labelY = Math.max(PAD.top + 5, Math.min(H - PAD.bottom - 5, labelY));
+    usedYPositions.push(labelY);
+
+    // Leader line
+    ctx.strokeStyle = '#999';
+    ctx.lineWidth = 0.5;
+    ctx.beginPath();
+    ctx.moveTo(lbl.x + 3, lbl.y);
+    ctx.lineTo(labelX - 3, labelY);
+    ctx.stroke();
+
+    // Arrow tip
+    ctx.fillStyle = '#999';
+    ctx.beginPath();
+    ctx.arc(labelX - 3, labelY, 1.5, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Label text
+    ctx.fillStyle = '#333';
+    ctx.fillText(`${lbl.nome} (${lbl.taxa.toFixed(0)}%)`, labelX, labelY + 3);
+  });
+
+  return canvas.toDataURL('image/png');
+}
+
 function buildDimensionSection(
   titulo: string,
   indice: Record<string, number[]>,
@@ -216,8 +348,13 @@ function buildDimensionSection(
   const pior = items[0];
   const melhor = items[items.length - 1];
 
+  // Gera scatter chart
+  const chartImage = createScatterChart(items);
+
   return [
     { text: titulo, style: 'sectionTitle' },
+    { text: 'Mapa de Efetividade', fontSize: 10, bold: true, color: CINZA, margin: [0, 0, 0, 5] },
+    { image: chartImage, width: 480, margin: [0, 0, 0, 10] },
     {
       table: { headerRows: 1, widths: [45, 'auto', 40, 25, '*', '*'], body: tableBody },
       layout: {
