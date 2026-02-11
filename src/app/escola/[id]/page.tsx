@@ -630,6 +630,20 @@ export default function EscolaPage() {
                       <span style={{ color: '#22c55e' }}>{formatarNumero(item.totalAcertos)} acertos</span>
                       <span style={{ color: '#ef4444' }}>{formatarNumero(item.totalErros)} erros</span>
                     </div>
+                    {(() => {
+                      const qsErradas = questoesFiltradas
+                        .filter(q => item.numeros.includes(q.numero) && q.taxa_acerto < 50)
+                        .map(q => q.numero)
+                        .sort((a, b) => a - b);
+                      if (qsErradas.length === 0) return null;
+                      return (
+                        <div className="dim-item-questoes-erradas">
+                          <span style={{ color: '#ef4444', fontSize: 10 }}>
+                            Questões erradas: {qsErradas.map(n => `Q${n}`).join(', ')}
+                          </span>
+                        </div>
+                      );
+                    })()}
                   </>
                 )}
               </div>
