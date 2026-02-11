@@ -180,11 +180,11 @@ function buildDimensionSection(
 ): Content[] {
   const legendas = legendaKey ? LEGENDAS[legendaKey] || {} : {};
 
-  const items: { nome: string; taxa: number; qtd: number }[] = [];
+  const items: { nome: string; taxa: number; qtd: number; numeros: number[] }[] = [];
   for (const [nome, numeros] of Object.entries(indice)) {
     const qs = questoesFiltradas.filter((q) => numeros.includes(q.numero));
     if (qs.length === 0) continue;
-    items.push({ nome, taxa: taxas[nome]?.taxa ?? 0, qtd: qs.length });
+    items.push({ nome, taxa: taxas[nome]?.taxa ?? 0, qtd: qs.length, numeros });
   }
   if (items.length === 0) return [];
   items.sort((a, b) => a.taxa - b.taxa);
@@ -193,15 +193,23 @@ function buildDimensionSection(
     [
       { text: 'Codigo', style: 'tableHeader' },
       { text: 'Descricao', style: 'tableHeader' },
-      { text: 'Taxa de Acerto', style: 'tableHeader' },
-      { text: 'Questoes', style: 'tableHeader' },
+      { text: 'Taxa', style: 'tableHeader' },
+      { text: 'Qtd', style: 'tableHeader' },
+      { text: 'Questoes Erradas (< 50%)', style: 'tableHeader' },
     ],
-    ...items.map((item) => [
-      { text: item.nome, bold: true, alignment: 'center' as const },
-      { text: legendas[item.nome] || item.nome, fontSize: 9 },
-      { text: `${item.taxa.toFixed(1)}%`, bold: true, color: corTaxa(item.taxa), fillColor: corTaxaBg(item.taxa), alignment: 'center' as const },
-      { text: String(item.qtd), alignment: 'center' as const },
-    ]),
+    ...items.map((item) => {
+      const erradas = questoesFiltradas
+        .filter(q => item.numeros.includes(q.numero) && q.taxa_acerto < 50)
+        .map(q => q.numero)
+        .sort((a, b) => a - b);
+      return [
+        { text: item.nome, bold: true, alignment: 'center' as const },
+        { text: legendas[item.nome] || item.nome, fontSize: 9 },
+        { text: `${item.taxa.toFixed(1)}%`, bold: true, color: corTaxa(item.taxa), fillColor: corTaxaBg(item.taxa), alignment: 'center' as const },
+        { text: String(item.qtd), alignment: 'center' as const },
+        { text: erradas.length > 0 ? erradas.map(n => `Q${n}`).join(', ') : '-', fontSize: 7, color: erradas.length > 0 ? VERMELHO_HEX : CINZA },
+      ];
+    }),
   ];
 
   const pior = items[0];
@@ -210,7 +218,7 @@ function buildDimensionSection(
   return [
     { text: titulo, style: 'sectionTitle' },
     {
-      table: { headerRows: 1, widths: [60, '*', 80, 50], body: tableBody },
+      table: { headerRows: 1, widths: [50, '*', 55, 30, '*'], body: tableBody },
       layout: {
         fillColor: (rowIndex: number, _node: unknown, columnIndex: number) => {
           if (rowIndex === 0) return AZUL;
