@@ -332,7 +332,8 @@ function buildDimensionSection(
 
   return [
     { text: titulo, style: 'sectionTitle' },
-    { text: 'Mapa de Efetividade', fontSize: 10, bold: true, color: CINZA, margin: [0, 0, 0, 5] },
+    { text: 'Mapa de Efetividade', fontSize: 10, bold: true, color: CINZA, margin: [0, 0, 0, 3] },
+    { text: 'Eixo X = quantidade de questoes na dimensao. Eixo Y = taxa de acerto (%). Tamanho da bolinha = score de efetividade (prioriza gaps que sao frequentes E tem baixo desempenho). Linha pontilhada = 50% de acerto. Verde >= 70% | Amarelo 50-70% | Vermelho < 50%.', fontSize: 7, italics: true, color: CINZA, margin: [0, 0, 0, 5] },
     { image: chart.image, width: 450, margin: [0, 0, 0, 3] },
     { text: chart.legend, fontSize: 7, color: CINZA, margin: [0, 0, 0, 10] },
     {
@@ -353,10 +354,10 @@ function buildDimensionSection(
 }
 
 function buildQuestionDetail(questoes: Questao[]): Content[] {
-  const sorted = [...questoes].sort((a, b) => a.taxa_acerto - b.taxa_acerto);
+  const sorted = [...questoes].sort((a, b) => a.numero - b.numero);
   const content: Content[] = [
     { text: 'Detalhamento por Questao', style: 'sectionTitle' },
-    { text: `${sorted.length} questoes ordenadas por taxa de acerto (menor para maior).`, style: 'body', margin: [0, 0, 0, 10] },
+    { text: `${sorted.length} questoes em ordem crescente (Q1, Q2, Q3...).`, style: 'body', margin: [0, 0, 0, 10] },
   ];
 
   for (let i = 0; i < sorted.length; i++) {
