@@ -374,7 +374,12 @@ export default function EscolaPage() {
           totalErros: 0
         });
       } else {
-        const taxa = taxas[nome]?.taxa ?? 0;
+        const taxaSprmed = taxas[nome]?.taxa;
+        const taxa = taxaSprmed !== undefined ? taxaSprmed : (
+          qs.reduce((s, q) => s + q.total, 0) > 0
+            ? (qs.reduce((s, q) => s + q.acertos, 0) / qs.reduce((s, q) => s + q.total, 0)) * 100
+            : 0
+        );
         const acertou = qs.filter(q => q.taxa_acerto >= 50).length;
         const errou = qs.filter(q => q.taxa_acerto < 50).length;
         const score = (100 - taxa) * Math.log(qs.length + 1);
