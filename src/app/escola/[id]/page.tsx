@@ -1474,22 +1474,19 @@ export default function EscolaPage() {
                 <div className="enunciado-texto">{questaoSelecionada.enunciado}</div>
               </div>
               
-              {/* Alternativas com distribuição */}
+              {/* Alternativas e gabarito */}
               <div className="alternativas-box">
-                <div className="alternativas-header">Alternativas e Distribuição de Respostas</div>
+                <div className="alternativas-header">Alternativas</div>
                 {['A', 'B', 'C', 'D'].map(letra => {
-                  const dist = questaoSelecionada.distribuicao?.[letra as 'A' | 'B' | 'C' | 'D'];
                   const isGabarito = questaoSelecionada.gabarito === letra;
-                  const pct = dist?.pct || 0;
-                  const qtd = dist?.qtd || 0;
-                  const textoAlt = letra === 'A' ? questaoSelecionada.alternativa_a 
+                  const textoAlt = letra === 'A' ? questaoSelecionada.alternativa_a
                     : letra === 'B' ? questaoSelecionada.alternativa_b
                     : letra === 'C' ? questaoSelecionada.alternativa_c
                     : questaoSelecionada.alternativa_d;
-                  
+
                   return (
-                    <div 
-                      key={letra} 
+                    <div
+                      key={letra}
                       className={`alternativa ${isGabarito ? 'correta' : 'incorreta'}`}
                     >
                       <div className="alt-header">
@@ -1497,24 +1494,12 @@ export default function EscolaPage() {
                         <div className="alt-texto">{textoAlt || `Alternativa ${letra}`}</div>
                         {isGabarito && <span className="alt-gabarito">✓ GABARITO</span>}
                       </div>
-                      <div className="alt-barra-row">
-                        <div className="alt-barra-container">
-                          <div 
-                            className="alt-barra" 
-                            style={{ 
-                              width: `${pct}%`,
-                              backgroundColor: isGabarito ? '#22c55e' : '#ef4444'
-                            }}
-                          />
-                        </div>
-                        <div className="alt-stats">
-                          <span className="alt-pct">{pct.toFixed(1)}%</span>
-                          <span className="alt-qtd">({qtd})</span>
-                        </div>
-                      </div>
                     </div>
                   );
                 })}
+                <div style={{ marginTop: 10, fontSize: 13, color: '#fff' }}>
+                  <strong>Acertos:</strong> <span style={{ color: '#22c55e' }}>{questaoSelecionada.acertos}</span> de {questaoSelecionada.total} alunos ({questaoSelecionada.taxa_acerto.toFixed(1)}%)
+                </div>
               </div>
             </div>
           )}

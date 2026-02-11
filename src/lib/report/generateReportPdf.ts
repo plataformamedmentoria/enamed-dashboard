@@ -278,39 +278,33 @@ function buildQuestionDetail(questoes: Questao[]): Content[] {
     const enunciado = q.enunciado.length > 600 ? q.enunciado.substring(0, 600) + '...' : q.enunciado;
     content.push({ text: enunciado, fontSize: 9, color: CINZA, margin: [0, 3, 0, 5] });
 
-    // Alternativas
-    if (q.distribuicao) {
-      const altBody: TableCell[][] = [
-        [
-          { text: 'Alt', style: 'tableHeader', alignment: 'center' },
-          { text: 'Texto', style: 'tableHeader' },
-          { text: '%', style: 'tableHeader', alignment: 'center' },
-          { text: 'Qtd', style: 'tableHeader', alignment: 'center' },
-        ],
-      ];
-      for (const letra of ['A', 'B', 'C', 'D'] as const) {
-        const dist = q.distribuicao[letra];
-        const isGab = q.gabarito === letra;
-        const textoAlt = letra === 'A' ? q.alternativa_a : letra === 'B' ? q.alternativa_b : letra === 'C' ? q.alternativa_c : q.alternativa_d;
-        const bg = isGab ? '#DCFCE7' : undefined;
-        const tc = isGab ? VERDE_HEX : CINZA;
-        altBody.push([
-          { text: isGab ? `${letra} *` : letra, bold: isGab, color: tc, fillColor: bg, alignment: 'center' },
-          { text: textoAlt ? (textoAlt.length > 100 ? textoAlt.substring(0, 100) + '...' : textoAlt) : `Alt ${letra}`, fontSize: 8, color: tc, fillColor: bg },
-          { text: `${(dist?.pct || 0).toFixed(1)}%`, bold: isGab, color: tc, fillColor: bg, alignment: 'center' },
-          { text: String(dist?.qtd || 0), color: tc, fillColor: bg, alignment: 'center' },
-        ]);
-      }
-      content.push({
-        table: { headerRows: 1, widths: [25, '*', 35, 35], body: altBody },
-        layout: {
-          fillColor: (rowIndex: number) => rowIndex === 0 ? AZUL : null,
-          hLineColor: () => '#DEE2E6',
-          vLineColor: () => '#DEE2E6',
-        },
-        margin: [0, 0, 0, 5],
-      });
+    // Alternativas (sem distribuição, apenas texto + gabarito)
+    const altBody: TableCell[][] = [
+      [
+        { text: 'Alt', style: 'tableHeader', alignment: 'center' },
+        { text: 'Texto', style: 'tableHeader' },
+      ],
+    ];
+    for (const letra of ['A', 'B', 'C', 'D'] as const) {
+      const isGab = q.gabarito === letra;
+      const textoAlt = letra === 'A' ? q.alternativa_a : letra === 'B' ? q.alternativa_b : letra === 'C' ? q.alternativa_c : q.alternativa_d;
+      const bg = isGab ? '#DCFCE7' : undefined;
+      const tc = isGab ? VERDE_HEX : CINZA;
+      altBody.push([
+        { text: isGab ? `${letra} *` : letra, bold: isGab, color: tc, fillColor: bg, alignment: 'center' },
+        { text: textoAlt ? (textoAlt.length > 120 ? textoAlt.substring(0, 120) + '...' : textoAlt) : `Alt ${letra}`, fontSize: 8, color: tc, fillColor: bg },
+      ]);
     }
+    content.push({
+      table: { headerRows: 1, widths: [25, '*'], body: altBody },
+      layout: {
+        fillColor: (rowIndex: number) => rowIndex === 0 ? AZUL : null,
+        hLineColor: () => '#DEE2E6',
+        vLineColor: () => '#DEE2E6',
+      },
+      margin: [0, 0, 0, 3],
+    });
+    content.push({ text: `Acertos: ${q.acertos} de ${q.total} alunos (${q.taxa_acerto.toFixed(1)}%)`, fontSize: 9, bold: true, color: VERDE_HEX, margin: [0, 0, 0, 5] });
 
     // Page break a cada 3 questões
     if ((i + 1) % 3 === 0 && i < sorted.length - 1) {
