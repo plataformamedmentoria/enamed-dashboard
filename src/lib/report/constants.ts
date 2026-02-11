@@ -120,6 +120,16 @@ export const ESCOLAS: Record<string, EscolaConfig> = {
     risco: 66,
     percentualRisco: 52,
   },
+  unifoa: {
+    nome: 'UNIFOA',
+    cidade: 'Volta Redonda',
+    uf: 'RJ',
+    alunos: 119,
+    nota: 61.71,
+    proficiencia: -0.3,
+    risco: 47,
+    percentualRisco: 39,
+  },
 };
 
 export const LEGENDAS: Record<string, Record<string, string>> = {
