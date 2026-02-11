@@ -569,11 +569,13 @@ export default function EscolaPage() {
                 <XAxis dataKey="qtd" type="number" name="Qtd" tick={{ fill: '#888', fontSize: 9 }} />
                 <YAxis dataKey="taxa" type="number" domain={[0, 100]} tick={{ fill: '#888', fontSize: 9 }} />
                 <ZAxis dataKey="score" range={[50, 400]} />
-                <Tooltip 
+                <Tooltip
                   contentStyle={{ backgroundColor: '#1a2744', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, fontSize: 12 }}
-                  labelStyle={{ color: '#fff' }}
+                  labelStyle={{ color: '#fff', fontWeight: 'bold', fontSize: 13, marginBottom: 4 }}
                   itemStyle={{ color: '#fff' }}
-                  formatter={(value, name) => {
+                  labelFormatter={(_label, payload) => payload?.[0]?.payload?.nome || ''}
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  formatter={(value: any, name: any) => {
                     if (typeof value !== 'number') return ['', ''];
                     if (name === 'Qtd') return [value, 'Questões'];
                     if (name === 'taxa') return [`${value.toFixed(1)}%`, 'Taxa'];
