@@ -570,16 +570,18 @@ export default function EscolaPage() {
                 <YAxis dataKey="taxa" type="number" domain={[0, 100]} tick={{ fill: '#888', fontSize: 9 }} />
                 <ZAxis dataKey="score" range={[50, 400]} />
                 <Tooltip
-                  contentStyle={{ backgroundColor: '#1a2744', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, fontSize: 12 }}
-                  labelStyle={{ color: '#fff', fontWeight: 'bold', fontSize: 13, marginBottom: 4 }}
-                  itemStyle={{ color: '#fff' }}
-                  labelFormatter={(_label, payload) => payload?.[0]?.payload?.nome || ''}
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  formatter={(value: any, name: any) => {
-                    if (typeof value !== 'number') return ['', ''];
-                    if (name === 'Qtd') return [value, 'Questões'];
-                    if (name === 'taxa') return [`${value.toFixed(1)}%`, 'Taxa'];
-                    return [value.toFixed(1), 'Score'];
+                  content={({ active, payload }: any) => {
+                    if (!active || !payload?.length) return null;
+                    const d = payload[0]?.payload;
+                    if (!d) return null;
+                    return (
+                      <div style={{ backgroundColor: '#1a2744', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, padding: '8px 12px', fontSize: 12 }}>
+                        <div style={{ color: '#fff', fontWeight: 'bold', fontSize: 13, marginBottom: 6 }}>{d.nome}</div>
+                        <div style={{ color: '#fff' }}>Questões: {d.qtd}</div>
+                        <div style={{ color: '#fff' }}>Taxa: {d.taxa?.toFixed(1)}%</div>
+                        <div style={{ color: '#fff' }}>Score: {d.score?.toFixed(1)}</div>
+                      </div>
+                    );
                   }}
                 />
                 <Scatter data={data}>
