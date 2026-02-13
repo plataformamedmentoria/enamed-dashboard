@@ -803,7 +803,7 @@ export default function EscolaPage() {
             <div className="section-desc">
               Estes são os <strong>4 indicadores-chave</strong> que resumem a performance da {escola.nome} no ENAMED 2025.
             </div>
-            <div className="cards cards-4">
+            <div className="cards cards-3">
               <div className="card">
                 <div className="card-label">Total de Alunos</div>
                 <div className="card-value">{escola.alunos}</div>
@@ -818,20 +818,6 @@ export default function EscolaPage() {
                 <div className="card-label">Proficiência TRI</div>
                 <div className="card-value">{escola.proficiencia}</div>
                 <div className="card-desc">Escala -3 a +3 | Zero = média nacional</div>
-              </div>
-              <div className="card">
-                <div className="card-label">Alunos em Risco</div>
-                {escola.risco > 0 ? (
-                  <>
-                    <div className="card-value danger">{escola.risco}</div>
-                    <div className="card-desc">{escola.percentualRisco}% com padrão de chute detectado</div>
-                  </>
-                ) : (
-                  <>
-                    <div className="card-value" style={{ color: '#888' }}>N/D</div>
-                    <div className="card-desc">Dados individuais não disponíveis</div>
-                  </>
-                )}
               </div>
             </div>
           </div>
@@ -947,58 +933,6 @@ export default function EscolaPage() {
             </div>
           </div>
           
-          {/* Clusters */}
-          <div className="section">
-            <div className="section-title">Perfis de Alunos (Clusters)</div>
-            <div className="section-desc">
-              Agrupamos os {escola.alunos} alunos em <strong>4 perfis distintos</strong> usando K-means baseado em:
-              taxa de acerto geral, acertos por área e score de chute. Cada cluster representa um grupo
-              que pode se beneficiar de <strong>intervenções pedagógicas específicas</strong>.
-            </div>
-            <div className="cards cards-4">
-              <div className="card" style={{ borderLeft: `4px solid ${escola.risco > 0 ? '#ef4444' : '#666'}` }}>
-                <div className="card-label">Padrão de Risco</div>
-                {escola.risco > 0 ? (
-                  <>
-                    <div className="card-value" style={{ color: '#ef4444' }}>{escola.risco}</div>
-                    <div className="card-desc">Possível chute ou desistência. Investigar causas (ansiedade, falta de preparo).</div>
-                  </>
-                ) : (
-                  <>
-                    <div className="card-value" style={{ color: '#666' }}>N/D</div>
-                    <div className="card-desc">Análise individual não disponível para dados agregados.</div>
-                  </>
-                )}
-              </div>
-              <div className="card" style={{ borderLeft: '4px solid #f59e0b' }}>
-                <div className="card-label">Baixa Performance</div>
-                <div className="card-value" style={{ color: '#f59e0b' }}>{Math.round(escola.alunos * 0.28)}</div>
-                <div className="card-desc">Dificuldade generalizada, sem padrão de chute. Reforço em conteúdos básicos.</div>
-              </div>
-              <div className="card" style={{ borderLeft: '4px solid #3b82f6' }}>
-                <div className="card-label">Performance Média</div>
-                <div className="card-value" style={{ color: '#3b82f6' }}>{Math.round(escola.alunos * 0.31)}</div>
-                <div className="card-desc">Na média, potencial de melhoria. Foco em MFC e simulados direcionados.</div>
-              </div>
-              <div className="card" style={{ borderLeft: '4px solid #22c55e' }}>
-                <div className="card-label">Alta Performance</div>
-                <div className="card-value" style={{ color: '#22c55e' }}>{Math.round(escola.alunos * 0.22)}</div>
-                <div className="card-desc">Acima da média nacional. Usar como monitores/multiplicadores.</div>
-              </div>
-            </div>
-          </div>
-          
-          {/* Como Detectamos Chute */}
-          <div className="section">
-            <div className="section-title">Como Detectamos Padrão de Chute?</div>
-            <div className="section-desc">
-              Usamos <strong>3 indicadores estatísticos</strong> combinados:<br/><br/>
-              <strong>1. Person-Fit (TRI)</strong> - Índice lz &lt; -2 indica padrão de resposta inconsistente com a habilidade estimada.<br/>
-              <strong>2. Sequências</strong> - 5+ alternativas iguais consecutivas (ex: AAAAA).<br/>
-              <strong>3. Inconsistência TRI</strong> - Erra questões fáceis e acerta difíceis (padrão aberrante).<br/><br/>
-              Alunos com <strong>score &gt;= 0.5</strong> são classificados como "alto risco".
-            </div>
-          </div>
         </div>
       </div>
 
@@ -1676,6 +1610,36 @@ export default function EscolaPage() {
       </div>
 
       <div className="footer">SPRMed Dashboard ENAMED 2025/2026®</div>
+
+      {/* WhatsApp Floating Button */}
+      <a
+        href="https://wa.me/5511941073157?text=Ol%C3%A1%20Dr.%20Vin%C3%ADcius%2C%20gostaria%20de%20tirar%20d%C3%BAvidas%20sobre%20o%20relat%C3%B3rio%20ENAMED."
+        target="_blank"
+        rel="noopener noreferrer"
+        title="Fale com o Dr. Vinícius - SPRMed"
+        style={{
+          position: 'fixed',
+          bottom: 24,
+          right: 24,
+          width: 60,
+          height: 60,
+          borderRadius: '50%',
+          background: '#25D366',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+          zIndex: 9999,
+          transition: 'transform 0.2s',
+          textDecoration: 'none',
+        }}
+        onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.1)')}
+        onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+      >
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+        </svg>
+      </a>
     </>
   );
 }
