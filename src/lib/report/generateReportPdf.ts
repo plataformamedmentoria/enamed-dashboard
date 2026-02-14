@@ -144,20 +144,20 @@ function buildExecutiveSummary(escola: typeof ESCOLAS[string], questoes: Questao
     [
       { text: 'Indicador', style: 'tableHeader' },
       { text: 'Valor', style: 'tableHeader' },
-      { text: 'Observacao', style: 'tableHeader' },
+      { text: 'Observação', style: 'tableHeader' },
     ],
-    ['Total de Questoes', { text: String(totalQuestoes), alignment: 'center' }, 'Questoes no escopo dos filtros'],
-    ['Media de Acerto', { text: `${mediaGeral.toFixed(1)}%`, color: corTaxa(mediaGeral), bold: true, alignment: 'center' }, `Nacional: 65.03 | Gap: ${(escola.nota - 65.03).toFixed(2)} pts`],
-    ['Nota Media', { text: String(escola.nota), alignment: 'center' }, `Proficiencia TRI: ${escola.proficiencia}`],
-    ['Questoes >= 70%', { text: String(verdes), color: VERDE_HEX, alignment: 'center' }, `${((verdes / totalQuestoes) * 100).toFixed(0)}% do total`],
-    ['Questoes 50-70%', { text: String(amarelas), color: AMARELO_HEX, alignment: 'center' }, `${((amarelas / totalQuestoes) * 100).toFixed(0)}% do total`],
-    ['Questoes < 50%', { text: String(vermelhas), color: VERMELHO_HEX, alignment: 'center' }, `${((vermelhas / totalQuestoes) * 100).toFixed(0)}% do total`],
-    ['Mais Dificil', { text: maisDificil ? `Q${maisDificil.numero} (${maisDificil.taxa_acerto.toFixed(1)}%)` : 'N/A', color: VERMELHO_HEX, alignment: 'center' }, maisDificil ? `${maisDificil.area} - ${maisDificil.tema || ''}` : ''],
-    ['Mais Facil', { text: maisFacil ? `Q${maisFacil.numero} (${maisFacil.taxa_acerto.toFixed(1)}%)` : 'N/A', color: VERDE, alignment: 'center' }, maisFacil ? `${maisFacil.area} - ${maisFacil.tema || ''}` : ''],
+    ['Total de Questões', { text: String(totalQuestoes), alignment: 'center' }, 'Questões no escopo dos filtros'],
+    ['Média de Acerto', { text: `${mediaGeral.toFixed(1)}%`, color: corTaxa(mediaGeral), bold: true, alignment: 'center' }, `Nacional: 65.03 | Gap: ${(escola.nota - 65.03).toFixed(2)} pts`],
+    ['Nota Média', { text: String(escola.nota), alignment: 'center' }, `Proficiência TRI: ${escola.proficiencia}`],
+    ['Questões >= 70%', { text: String(verdes), color: VERDE_HEX, alignment: 'center' }, `${((verdes / totalQuestoes) * 100).toFixed(0)}% do total`],
+    ['Questões 50-70%', { text: String(amarelas), color: AMARELO_HEX, alignment: 'center' }, `${((amarelas / totalQuestoes) * 100).toFixed(0)}% do total`],
+    ['Questões < 50%', { text: String(vermelhas), color: VERMELHO_HEX, alignment: 'center' }, `${((vermelhas / totalQuestoes) * 100).toFixed(0)}% do total`],
+    ['Mais Difícil', { text: maisDificil ? `Q${maisDificil.numero} (${maisDificil.taxa_acerto.toFixed(1)}%)` : 'N/A', color: VERMELHO_HEX, alignment: 'center' }, maisDificil ? `${maisDificil.area} - ${maisDificil.tema || ''}` : ''],
+    ['Mais Fácil', { text: maisFacil ? `Q${maisFacil.numero} (${maisFacil.taxa_acerto.toFixed(1)}%)` : 'N/A', color: VERDE, alignment: 'center' }, maisFacil ? `${maisFacil.area} - ${maisFacil.tema || ''}` : ''],
   ];
 
   return [
-    { text: 'Sumario Executivo', style: 'sectionTitle' },
+    { text: 'Sumário Executivo', style: 'sectionTitle' },
     { text: `Análise detalhada do desempenho da ${escola.nome} (${escola.cidade}/${escola.uf}) no ENAMED 2025, com ${totalQuestoes} questões.`, style: 'body', margin: [0, 0, 0, 10] },
     {
       table: { headerRows: 1, widths: ['*', 'auto', '*'], body: tableBody },
@@ -167,7 +167,7 @@ function buildExecutiveSummary(escola: typeof ESCOLAS[string], questoes: Questao
         vLineColor: () => '#DEE2E6',
       },
     },
-    { text: 'Verde (>= 70%) = bom | Amarelo (50-70%) = atencao | Vermelho (< 50%) = critico', fontSize: 8, italics: true, color: CINZA, margin: [0, 5, 0, 0] },
+    { text: 'Verde (>= 70%) = bom | Amarelo (50-70%) = atenção | Vermelho (< 50%) = crítico', fontSize: 8, italics: true, color: CINZA, margin: [0, 5, 0, 0] },
     { text: '', pageBreak: 'after' },
   ];
 }
@@ -223,7 +223,7 @@ function createScatterChart(items: { nome: string; taxa: number; qtd: number }[]
   ctx.fillStyle = '#666';
   ctx.font = '9px Arial';
   ctx.textAlign = 'center';
-  ctx.fillText('Questoes', PAD.left + plotW / 2, H - 5);
+  ctx.fillText('Questões', PAD.left + plotW / 2, H - 5);
   ctx.save();
   ctx.translate(10, PAD.top + plotH / 2);
   ctx.rotate(-Math.PI / 2);
@@ -303,8 +303,8 @@ function buildDimensionSection(
 
   const tableBody: TableCell[][] = [
     [
-      { text: 'Codigo', style: 'tableHeader' },
-      { text: 'Descricao', style: 'tableHeader' },
+      { text: 'Código', style: 'tableHeader' },
+      { text: 'Descrição', style: 'tableHeader' },
       { text: 'Taxa', style: 'tableHeader' },
       { text: 'Qtd', style: 'tableHeader' },
       { text: 'Acertadas (>= 50%)', style: 'tableHeader' },
@@ -358,7 +358,7 @@ function buildQuestionDetail(questoes: Questao[]): Content[] {
   const sorted = [...questoes].sort((a, b) => a.numero - b.numero);
   const content: Content[] = [
     { text: 'Detalhamento por Questão', style: 'sectionTitle' },
-    { text: `${sorted.length} questoes em ordem crescente (Q1, Q2, Q3...).`, style: 'body', margin: [0, 0, 0, 10] },
+    { text: `${sorted.length} questões em ordem crescente (Q1, Q2, Q3...).`, style: 'body', margin: [0, 0, 0, 10] },
   ];
 
   for (let i = 0; i < sorted.length; i++) {
@@ -390,7 +390,7 @@ function buildQuestionDetail(questoes: Questao[]): Content[] {
     if (q.subespecialidade) hier.push(q.subespecialidade);
     if (q.tema) hier.push(q.tema);
     if (hier.length > 0) {
-      content.push({ text: `Conteudo: ${hier.join(' > ')}`, fontSize: 8, color: CINZA, margin: [0, 0, 0, 2] });
+      content.push({ text: `Conteúdo: ${hier.join(' > ')}`, fontSize: 8, color: CINZA, margin: [0, 0, 0, 2] });
     }
 
     // Enunciado
@@ -480,7 +480,7 @@ async function createRotatedLogo(logoBase64: string): Promise<string> {
 export async function generateReportPdf(params: ReportParams): Promise<void> {
   const { escolaId, questoes, indices, sprmed, areaFormacao, areaConhecimento } = params;
   const escola = ESCOLAS[escolaId];
-  if (!escola) throw new Error(`Escola nao encontrada: ${escolaId}`);
+  if (!escola) throw new Error(`Escola não encontrada: ${escolaId}`);
 
   // Carrega logo para watermark
   const logoBase64 = await loadLogoBase64();
